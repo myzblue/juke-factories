@@ -19,3 +19,9 @@ juke.factory('StatsFactory', function ($q) {
   };
   return statsObj;
 });
+
+juke.factory('AlbumFactory', function ($q) {
+  var albums = {};
+  albums.fetchAll = $http.get('/api/albums/')
+  albums.fetchById = $http.get('/')
+}
