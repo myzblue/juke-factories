@@ -1,11 +1,11 @@
 'use strict';
 
-juke.controller('AlbumCtrl', function ( AlbumFactory, $scope, $http, $rootScope, $log) {
+juke.controller('AlbumCtrl', function ( AlbumFactory, PlayerFactory, $scope, $http, $rootScope, $log) {
 
     AlbumFactory.fetchAll()
   .then(function (res) { return res.data; })
   .then(function (albums) {
-    return  AlbumFactory.fetchById(1); // temp: get one
+    return  AlbumFactory.fetchById(4); // temp: get one
   })
   .then(function (res) { return res.data; })
   .then(function (album) {
@@ -18,27 +18,19 @@ juke.controller('AlbumCtrl', function ( AlbumFactory, $scope, $http, $rootScope,
   })
   .catch($log.error); // $log service can be turned on and off; also, pre-bound
 
-  // main toggle
+
+    $scope.pause = PlayerFactory.pause;
+    $scope.play = PlayerFactory.start;
+
+
+    // main toggle
   $scope.toggle = function (song) {
-    if ($scope.playing && song === $scope.currentSong) {
-      $rootScope.$broadcast('pause');
-    } else $rootScope.$broadcast('play', song);
+      console.log($scope.playing, "this song ", song,"current song ", $scope.currentSong, "factory current song = ", PlayerFactory.getCurrentSong());
+    if (PlayerFactory.isPlaying() && song === PlayerFactory.getCurrentSong()) {
+        PlayerFactory.pause();
+    } else PlayerFactory.start(song);
   };
 
-  // incoming events (from Player, toggle, or skip)
-  $scope.$on('pause', pause);
-  $scope.$on('play', play);
-  $scope.$on('next', next);
-  $scope.$on('prev', prev);
-
-  // functionality
-  function pause () {
-    $scope.playing = false;
-  }
-  function play (event, song) {
-    $scope.playing = true;
-    $scope.currentSong = song;
-  };
 
   // a "true" modulo that wraps negative to the top of the range
   function mod (num, m) { return ((num % m) + m) % m; };
